@@ -1,0 +1,56 @@
+
+State Machine - |MiniGPU|core:core_gen[1].core_inst|lsu:threads[3].lsu_instance|lsu_state_internal
+Name lsu_state_internal.DONE lsu_state_internal.WAITING lsu_state_internal.REQUESTING lsu_state_internal.IDLE 
+lsu_state_internal.IDLE 0 0 0 0 
+lsu_state_internal.REQUESTING 0 0 1 1 
+lsu_state_internal.WAITING 0 1 0 1 
+lsu_state_internal.DONE 1 0 0 1 
+
+State Machine - |MiniGPU|core:core_gen[1].core_inst|lsu:threads[2].lsu_instance|lsu_state_internal
+Name lsu_state_internal.DONE lsu_state_internal.WAITING lsu_state_internal.REQUESTING lsu_state_internal.IDLE 
+lsu_state_internal.IDLE 0 0 0 0 
+lsu_state_internal.REQUESTING 0 0 1 1 
+lsu_state_internal.WAITING 0 1 0 1 
+lsu_state_internal.DONE 1 0 0 1 
+
+State Machine - |MiniGPU|core:core_gen[1].core_inst|lsu:threads[1].lsu_instance|lsu_state_internal
+Name lsu_state_internal.DONE lsu_state_internal.WAITING lsu_state_internal.REQUESTING lsu_state_internal.IDLE 
+lsu_state_internal.IDLE 0 0 0 0 
+lsu_state_internal.REQUESTING 0 0 1 1 
+lsu_state_internal.WAITING 0 1 0 1 
+lsu_state_internal.DONE 1 0 0 1 
+
+State Machine - |MiniGPU|core:core_gen[1].core_inst|lsu:threads[0].lsu_instance|lsu_state_internal
+Name lsu_state_internal.DONE lsu_state_internal.WAITING lsu_state_internal.REQUESTING lsu_state_internal.IDLE 
+lsu_state_internal.IDLE 0 0 0 0 
+lsu_state_internal.REQUESTING 0 0 1 1 
+lsu_state_internal.WAITING 0 1 0 1 
+lsu_state_internal.DONE 1 0 0 1 
+
+State Machine - |MiniGPU|core:core_gen[0].core_inst|lsu:threads[3].lsu_instance|lsu_state_internal
+Name lsu_state_internal.DONE lsu_state_internal.WAITING lsu_state_internal.REQUESTING lsu_state_internal.IDLE 
+lsu_state_internal.IDLE 0 0 0 0 
+lsu_state_internal.REQUESTING 0 0 1 1 
+lsu_state_internal.WAITING 0 1 0 1 
+lsu_state_internal.DONE 1 0 0 1 
+
+State Machine - |MiniGPU|core:core_gen[0].core_inst|lsu:threads[2].lsu_instance|lsu_state_internal
+Name lsu_state_internal.DONE lsu_state_internal.WAITING lsu_state_internal.REQUESTING lsu_state_internal.IDLE 
+lsu_state_internal.IDLE 0 0 0 0 
+lsu_state_internal.REQUESTING 0 0 1 1 
+lsu_state_internal.WAITING 0 1 0 1 
+lsu_state_internal.DONE 1 0 0 1 
+
+State Machine - |MiniGPU|core:core_gen[0].core_inst|lsu:threads[1].lsu_instance|lsu_state_internal
+Name lsu_state_internal.DONE lsu_state_internal.WAITING lsu_state_internal.REQUESTING lsu_state_internal.IDLE 
+lsu_state_internal.IDLE 0 0 0 0 
+lsu_state_internal.REQUESTING 0 0 1 1 
+lsu_state_internal.WAITING 0 1 0 1 
+lsu_state_internal.DONE 1 0 0 1 
+
+State Machine - |MiniGPU|core:core_gen[0].core_inst|lsu:threads[0].lsu_instance|lsu_state_internal
+Name lsu_state_internal.DONE lsu_state_internal.WAITING lsu_state_internal.REQUESTING lsu_state_internal.IDLE 
+lsu_state_internal.IDLE 0 0 0 0 
+lsu_state_internal.REQUESTING 0 0 1 1 
+lsu_state_internal.WAITING 0 1 0 1 
+lsu_state_internal.DONE 1 0 0 1 

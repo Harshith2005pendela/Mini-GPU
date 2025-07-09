@@ -1,0 +1,152 @@
+`defaultnettype none
+`timescale 1ns/1ns
+
+
+//I get all the control signals from the instructions from here only
+module #(
+parameter PROG_MEM_DATA_BITS = 16,
+parameter imm_size = 8
+)( input logic clk,
+	input logic reset,
+	
+	input logic [2:0] core_state,
+	input logic [PROG_MEM_DATA_BITS-1:0] instr,
+	
+	// data needed 
+	output logic dec_rd_addr,
+	output logic dec_rs_addr,
+	output logic dec_rt_addr,
+	output logic dec_nzp,
+	output logic [imm_size-1:0] dec_imm
+
+	//Control signals
+	output logic dec_reg_write_en,
+	output logic dec_alu_arith_mux,
+	output logic [1:0] dec_alu_out_mux,
+	output logic dec_mem_read_ask,
+	output logic dec_mem_write_ask,
+	output logic [1:0] dec_reg_input_mux,
+	output logic dec_nzp_write_en,
+	output logic dec_pc_mux
+	
+	// this is very much forgettable
+	output logic dec_ret
+	// if its a return instruction then this is 1 
+);
+
+localparam NOP = 4'b000,
+			  BRNZP = 4'b0001,
+			  CMP = 4'b0010,
+			  ADD = 4'b0011,
+			  SUB = 4'b0100,
+			  MUL = 4'b0101,
+			  DIV = 4'b0110,
+			  LDR = 4'b0111,
+			  STR = 4'b1000,
+			  CONST =4'b1001,
+			  RET = 4'b1111;
+			  
+always_ff @(posedge clk) begin
+	if(reset) begin
+		    dec_rd_addr         <= 0;
+			 dec_rs_addr         <= 0;
+			 dec_rt_addr         <= 0;
+			 dec_nzp             <= 0;
+			 dec_imm             <= 0;
+			 dec_reg_write_en    <= 0;
+			 dec_alu_arith_mux   <= 0;
+			 dec_alu_out_mux     <= 0;
+			 dec_mem_read_ask    <= 0;
+			 dec_mem_write_ask   <= 0;
+			 dec_reg_input_mux   <= 0;
+			 dec_nzp_write_en    <= 0;
+			 dec_pc_mux          <= 0;
+			 dec_ret             <= 0;
+	end
+	else begin
+		//Decode in core stage only
+		if(core_state == 3'b010) begin
+			// Decode ra rey
+			dec_rd_addr <= instr[11:8];
+			dec_rs_addr <= instr[7:4];
+			dec_rt_addr <= instr[3:0];
+			dec_imm <= instr[7:0];
+			dec_nzp <= instr[11:7];
+			// Set all control signals to 0 first
+			 dec_reg_write_en    <= 0;
+			 dec_alu_arith_mux   <= 0;
+			 dec_alu_out_mux     <= 0;
+			 dec_mem_read_ask    <= 0;
+			 dec_mem_write_ask   <= 0;
+			 dec_reg_input_mux   <= 0;
+			 dec_nzp_write_en    <= 0;
+			 dec_pc_mux          <= 0;
+			 dec_ret             <= 0;
+				case(instr[15:12]) 
+					NOP: begin
+					// Eat 5 star do nothing
+					end
+					BRNZP: begin
+						dec_pc_mux <= 1;
+					end
+					CMP: begin
+						dec_nzp_write_en <= 1;
+						dec_alu_out_mux <= 1;
+					end
+					ADD: begin 
+						dec_reg_write_en <= 1;
+						dec_reg_input_mux <= 2'b00;
+						dec_alu_arith_mux <= 2'b00;
+					end
+					SUB: begin 
+						dec_reg_write_en <= 1;
+						dec_reg_input_mux <= 2'b00;
+						dec_alu_arith_mux <= 2'b01;
+					end
+					MUL: begin
+						dec_reg_write_en <= 1;
+						dec_reg_input_mux <= 2'b00;
+						dec_alu_arith_mux <= 2'b10;
+					end
+					DIV: begin
+						dec_reg_write_en <= 1;
+						dec_reg_input_mux <= 2'b00;
+						dec_alu_arith_mux <= 2'b11;
+					end
+					LDR: begin
+						dec_mem_read_ask <= 1;
+						dec_reg_write_en <= 1;
+						dec_reg_input_mux <= 2'b10;
+					end
+					STR: begin
+						dec_mem_write_ask <= 1;
+					end
+					CONST: begin 
+						dec_reg_input_mux <= 2'b01;
+					end
+					RET: begin 
+						dec_ret <= 1;
+					end
+				endcase
+			end
+		end
+	end
+endmodule
+						
+					
+						
+	
+
+					
+
+						
+						
+						
+						
+				
+					
+		
+			  
+
+	
+	

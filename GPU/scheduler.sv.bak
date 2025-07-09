@@ -1,0 +1,116 @@
+`default_nettype none
+`timescale 1ns/1ns
+
+//SCHEDULER 
+// This only gives us the idea of which state we shd be in  whether we need to use ALU or regs or Mem controller
+// 1. FETCH - In this state it gets the Program Counter from the Program Memory
+// 2. DECODE - decodes the instruction
+// 3. REQUEST - gets the data from the Memory
+// 4. WAIT - Wait for the Memory requests
+// 5. EXECUTE - Do operations like ALU etc stuff does
+// 6. UPDATE - Update the reg values mainly Nzp also gets updated here don't forget.
+
+module scheduler #(
+parameter THREADS_PER_BLOCK = 4,
+)(
+		input logic clk,
+		input logic reset,
+		input logic start, // start is used for starting the Scheduler action 
+		
+		//Decoder sends the return Intruction at last saying that this is the last of Instruction
+		input logic dec_ret;
+		
+		//FETCHER STATE and State of LSU 4 LSU states
+		input logic [2:0] fetcher_state,
+		input logic [1:0] lsu_state[THREADS_PER_BLOCK-1:0],
+		
+		// Current PC , Next PC
+		output logic[7:0] current_pc,
+		input logic[7:0] next_pc[THREADS_PER_BLOCK-1:0],// I want to try implementing branch divergence so taking multiple next PCs
+		
+		//Core state and Schedulers operation got completed
+		output logic[2:0] core_state,
+		output logic complete
+		);
+
+localparam IDLE =3'b000, 
+			  FETCH =3'b001,
+			  DECODE = 3'b010,
+			  REQUEST = 3'b011,
+			  WAIT = 3'b100,
+			  EXECUTE = 3'b101,
+			  UPDATE = 3'b110,
+			  DONE = 3'b111;
+			  
+always_ff@(posedge clk) begin
+	if(reset) begin
+		current_pc <= 0;
+		core_state <= IDLE;
+		complete <= 0
+	end 
+	else begin
+		case(core_state)
+			IDLE: begin
+				if(start) core_state <= FETCH;
+			end
+			FETCH: begin
+			// Only when Fetcher has succesfully fetched the instruction move on
+				if(fetcher_state == 3'b010) begin
+					core_state <= DECODE;
+				end
+			end
+			DECODE: begin
+			// Nothing to check just go on to next stage
+				core_state <= REQUEST;
+			end
+			REQUEST: begin
+			// This is actually one cycle if memory responds immediately and we get the data from the cache 
+				core_state <= WAIT;
+			end
+			WAIT: begin
+			// Waiting for all LSUs to complete
+				logic any_lsu_wait = 0;
+				for(int i = 0;i<THREADS_PER_BLOCK;i++) begin
+					// Make sure no lsu is in Requesting state or Waiting state 
+					if(lsu_state[i] == 2'b01 || lsu_state[i] == 2'b10) begin
+						any_lsu_wait == 1;
+						break;
+					end
+				end
+				
+				if(!any_lsu_wait) begin
+					core_state <= EXECUTE;
+				end
+			end
+			EXECUTE:begin
+				core_state <= UPDATE;
+			end
+			UPDATE:begin
+				if(dec_ret) begin
+					// On reaching a RET instruction
+					complete <= 1;
+					core_state <= DONE;
+				end
+				else begin
+				// Branch Divergence I want to implement
+					current_PC <= next_pc[THREADS_PER_BLOCK-1];
+					
+					core_state <= FETCH;
+				end
+			end
+			DONE: begin
+			end
+		endcase 
+	end
+end
+endmodule
+	
+					
+					
+				
+
+
+	
+	
+	
+	
